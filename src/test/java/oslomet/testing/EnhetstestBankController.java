@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import oslomet.testing.API.BankController;
 import oslomet.testing.DAL.BankRepository;
@@ -18,7 +17,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -29,33 +27,126 @@ public class EnhetstestBankController {
     // denne skal testes
     private BankController bankController;
 
+
+    @Test
+    public void test_hentTransaksjonerOK(){
+
+
+        List ArrayList = new ArrayList<>();
+        Konto konto1 = new Konto("11144477889", "11111111111", 250.0, "Visa", "NOK",ArrayList);
+
+
+        when(sjekk.loggetInn()).thenReturn(konto1.getPersonnummer());
+
+        when(repository.hentTransaksjoner(konto1.getKontonummer(),"12.11", "14.11")).thenReturn(konto1);
+
+        Konto resultat = bankController.hentTransaksjoner("11111111111","12.11","14.11");
+
+        assertEquals(konto1, resultat);
+
+    }
+
+
+    @Test
+    public void test_hentTransaksjonerNULL() {
+
+
+        when(sjekk.loggetInn()).thenReturn(null);
+
+        Konto resultat = bankController.hentTransaksjoner("11111111111", "12.11", "14.11");
+
+        assertNull(resultat);
+    }
+
+    @Test
+    public void hentSaldiOK(){
+
+        List <Konto> konto1 = new ArrayList<>();
+
+        when(sjekk.loggetInn()).thenReturn(anyString());
+        when(repository.hentSaldi("1111111111")).thenReturn(konto1);
+
+        List<Konto> resultat1 = bankController.hentSaldi();
+
+        assertEquals(konto1, resultat1);
+
+    }
+
+    @Test
+    public void hentSaldiFEIL(){
+
+        when(sjekk.loggetInn()).thenReturn(null);
+
+        List<Konto> resultat1 = bankController.hentSaldi();
+
+        assertNull(resultat1);
+    }
+
+    @Test
+    public void hentbetalingerOK(){
+        List <Transaksjon> transaksjon1  = new ArrayList<>();
+
+        when(sjekk.loggetInn()).thenReturn("11111111111");
+        when(repository.hentBetalinger(anyString())).thenReturn(transaksjon1);
+
+        List <Transaksjon> resultat2 = bankController.hentBetalinger();
+
+        assertEquals(transaksjon1, resultat2);
+
+    }
+
+    @Test
+    public void hentbetalingerFEIL() {
+
+        when(sjekk.loggetInn()).thenReturn(null);
+
+        List <Transaksjon> resultat2 = bankController.hentBetalinger();
+
+        assertNull(resultat2);
+
+    }
+
+    @Test
+    public void utforbetalingOK(){
+
+        List<Transaksjon> transaksjoner = new ArrayList<>();
+
+        when(sjekk.loggetInn()).thenReturn("11111111111");
+        when(repository.utforBetaling(1)).thenReturn("OK");
+        when(repository.hentBetalinger("11111111111")).thenReturn(transaksjoner);
+
+        List <Transaksjon> resultat3 = bankController.utforBetaling(1);
+
+        assertEquals(transaksjoner, resultat3);}
+
+    @Test
+    public void utforbetalingIKKELoggetInn(){
+
+
+        when(sjekk.loggetInn()).thenReturn(null);
+
+        List<Transaksjon> resultat4 = bankController.utforBetaling(0);
+        assertNull(resultat4);
+
+    }
+
+
+
+
+
+
+
+
+
     @Mock
     // denne skal Mock'es
     private BankRepository repository;
 
+
+
     @Mock
     // denne skal Mock'es
     private Sikkerhet sjekk;
-
-    @Test
-    public void hentTransaksjonerOK(){
-        List <Transaksjon> transaksjoner = new ArrayList<>();
-        Konto enKonto = new Konto("12345678910", "12345", 14.99, "Brukskonto", "NOK", transaksjoner);
-
-        when(sjekk.loggetInn()).thenReturn("12345678910");
-
-        when(repository.hentTransaksjoner("12345", "12-11-2022", "15-11-2022")).thenReturn(enKonto);
-
-        // Act
-        Konto resultat = bankController.hentTransaksjoner("12345", "12-11-2022", "15-11-2022");
-
-        assertEquals(enKonto, resultat);
-    }
-
-    @Test
-    public void hentTransaksjonerFeil(){
-
-    }
 
     @Test
     public void hentKundeInfo_loggetInn() {
@@ -114,6 +205,7 @@ public class EnhetstestBankController {
     @Test
     public void hentKonti_IkkeLoggetInn()  {
         // arrange
+
         when(sjekk.loggetInn()).thenReturn(null);
 
         // act
