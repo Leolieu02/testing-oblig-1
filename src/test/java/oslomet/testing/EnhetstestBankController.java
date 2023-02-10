@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -28,9 +29,18 @@ public class EnhetstestBankController {
     private BankController bankController;
 
 
+    @Mock
+    // denne skal Mock'es
+    private BankRepository repository;
+
+
+    @Mock
+    // denne skal Mock'es
+    private Sikkerhet sjekk;
+
+
     @Test
     public void test_hentTransaksjonerOK(){
-
 
         List ArrayList = new ArrayList<>();
         Konto konto1 = new Konto("11144477889", "11111111111", 250.0, "Visa", "NOK",ArrayList);
@@ -46,10 +56,8 @@ public class EnhetstestBankController {
 
     }
 
-
     @Test
     public void test_hentTransaksjonerNULL() {
-
 
         when(sjekk.loggetInn()).thenReturn(null);
 
@@ -71,6 +79,38 @@ public class EnhetstestBankController {
         assertEquals(konto1, resultat1);
 
     }
+
+    @Test
+    public void reigstrerBetaling_OK(){
+        // arrange
+        Transaksjon transaksjon = new Transaksjon(1, "20102012345", 100.5, "2015-03-15", "Fjordkraft", "105010123456", "1010");
+        String personnummer = "100299 89333";
+
+        when(sjekk.loggetInn()).thenReturn("10101010");
+
+        when(repository.registrerBetaling(transaksjon)).thenReturn("OK");
+
+        // act
+        String resultat = bankController.registrerBetaling(transaksjon);
+
+        // assert
+        assertEquals("OK", resultat);
+
+    }
+
+    @Test
+    public void reigstrerBetaling_Feil(){
+        // arrange
+        Transaksjon transaksjon = new Transaksjon(1, "20102012345", 100.5, "2015-03-15", "Fjordkraft", "105010123456", "1010");
+        when(sjekk.loggetInn()).thenReturn(null);
+
+        // act
+        String resultat = bankController.registrerBetaling(transaksjon);
+
+        // assert
+        assertNull(resultat);
+    }
+
 
     @Test
     public void hentSaldiFEIL(){
@@ -117,7 +157,8 @@ public class EnhetstestBankController {
 
         List <Transaksjon> resultat3 = bankController.utforBetaling(1);
 
-        assertEquals(transaksjoner, resultat3);}
+        assertEquals(transaksjoner, resultat3);
+    }
 
     @Test
     public void utforbetalingIKKELoggetInn(){
@@ -129,24 +170,6 @@ public class EnhetstestBankController {
         assertNull(resultat4);
 
     }
-
-
-
-
-
-
-
-
-
-    @Mock
-    // denne skal Mock'es
-    private BankRepository repository;
-
-
-
-    @Mock
-    // denne skal Mock'es
-    private Sikkerhet sjekk;
 
     @Test
     public void hentKundeInfo_loggetInn() {
@@ -214,5 +237,36 @@ public class EnhetstestBankController {
         // assert
         assertNull(resultat);
     }
+
+    @Test
+    public void endreKunde_OK() {
+        Kunde kunde1 = new Kunde("12345678910", "Per", "Hansen", "Osloveien 2",
+                "0123", "Oslo", "10203040", "Hei123");
+
+        when(sjekk.loggetInn()).thenReturn("1020304050");
+
+        when(repository.endreKundeInfo(any())).thenReturn("OK");
+
+        // act
+        String resultat = bankController.endre(kunde1);
+
+        // assert
+        assertEquals("OK", resultat);
+    }
+
+    @Test
+    public void endreKunde_Feil() {
+        // arrange
+        Kunde kunde1 = new Kunde("12345678910", "Per", "Hansen", "Osloveien 2",
+                "0123", "Oslo", "10203040", "Hei123");
+        when(sjekk.loggetInn()).thenReturn(null);
+
+        // act
+        String resultat = bankController.endre(kunde1);
+
+        // assert
+        assertNull(resultat);
+    }
+
 }
 
