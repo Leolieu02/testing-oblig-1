@@ -30,7 +30,7 @@ public class EnhetstestKundeController {
     private AdminRepository repository;
 
     @Mock
-    // mocker sikkerhet, for å sjekke logg inn status
+    // mocker sikkerhet, for å sjekke logg inn statusen
     private Sikkerhet sjekk;
 
     @Test
