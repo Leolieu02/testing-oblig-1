@@ -163,9 +163,4 @@ public class EnhetstestKundeController {
         assertEquals("Ikke logget inn", resultat);
     }
 
-
-
-
-
-
 }

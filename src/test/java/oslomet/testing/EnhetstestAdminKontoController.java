@@ -36,6 +36,7 @@ public class EnhetstestAdminKontoController {
 
     @Test
     public void hentAlleKonti_loggetInn(){
+        // arrange
         List<Konto> konti = new ArrayList<>();
         Konto konto1 = new Konto("123456789000", "123456543212", 300,
                 "Brukskonto", "NOK", null);

@@ -41,52 +41,72 @@ public class EnhetstestBankController {
 
     @Test
     public void test_hentTransaksjonerOK(){
-
+        // arrange
         List ArrayList = new ArrayList<>();
         Konto konto1 = new Konto("11144477889", "11111111111", 250.0, "Visa", "NOK",ArrayList);
+        String personnummer = "100299 89333"; // random laget personnummer
 
-
-        when(sjekk.loggetInn()).thenReturn(konto1.getPersonnummer());
+        when(sjekk.loggetInn()).thenReturn(personnummer);
 
         when(repository.hentTransaksjoner(konto1.getKontonummer(),"12.11", "14.11")).thenReturn(konto1);
 
+        // act
         Konto resultat = bankController.hentTransaksjoner("11111111111","12.11","14.11");
 
+        // assert
         assertEquals(konto1, resultat);
-
     }
 
     @Test
     public void test_hentTransaksjonerNULL() {
-
+        // arrange
         when(sjekk.loggetInn()).thenReturn(null);
 
+        // act
         Konto resultat = bankController.hentTransaksjoner("11111111111", "12.11", "14.11");
 
+        // assert
         assertNull(resultat);
     }
 
     @Test
     public void hentSaldiOK(){
+        // arrange
+        List <Transaksjon> transaksjoner = new ArrayList<>();
+        Konto konto1 = new Konto("11144477889", "11111111111", 250.0, "Visa", "NOK", transaksjoner);
+        List <Konto> kontoer = new ArrayList<>();
+        kontoer.add(konto1);
+        String personnummer = "100299 89333"; // random laget personnummer
 
-        List <Konto> konto1 = new ArrayList<>();
+        when(sjekk.loggetInn()).thenReturn(personnummer);
+        when(repository.hentSaldi(personnummer)).thenReturn(kontoer);
 
-        when(sjekk.loggetInn()).thenReturn(anyString());
-        when(repository.hentSaldi("1111111111")).thenReturn(konto1);
+        // act
+        List <Konto> resultat1 = bankController.hentSaldi();
 
+        // assert
+        assertEquals(kontoer, resultat1);
+    }
+
+    @Test
+    public void hentSaldiFEIL(){
+        // arrange
+        when(sjekk.loggetInn()).thenReturn(null);
+
+        // act
         List<Konto> resultat1 = bankController.hentSaldi();
 
-        assertEquals(konto1, resultat1);
-
+        // assert
+        assertNull(resultat1);
     }
 
     @Test
     public void reigstrerBetaling_OK(){
         // arrange
         Transaksjon transaksjon = new Transaksjon(1, "20102012345", 100.5, "2015-03-15", "Fjordkraft", "105010123456", "1010");
-        String personnummer = "100299 89333";
+        String personnummer = "100299 89333"; // random laget personnummer
 
-        when(sjekk.loggetInn()).thenReturn("10101010");
+        when(sjekk.loggetInn()).thenReturn(personnummer);
 
         when(repository.registrerBetaling(transaksjon)).thenReturn("OK");
 
@@ -95,7 +115,6 @@ public class EnhetstestBankController {
 
         // assert
         assertEquals("OK", resultat);
-
     }
 
     @Test
@@ -111,69 +130,68 @@ public class EnhetstestBankController {
         assertNull(resultat);
     }
 
-
-    @Test
-    public void hentSaldiFEIL(){
-
-        when(sjekk.loggetInn()).thenReturn(null);
-
-        List<Konto> resultat1 = bankController.hentSaldi();
-
-        assertNull(resultat1);
-    }
-
     @Test
     public void hentbetalingerOK(){
+        // arrange
         List <Transaksjon> transaksjon1  = new ArrayList<>();
+        String personnummer = "100299 89333"; // random laget personnummer
 
-        when(sjekk.loggetInn()).thenReturn("11111111111");
-        when(repository.hentBetalinger(anyString())).thenReturn(transaksjon1);
+        when(sjekk.loggetInn()).thenReturn(personnummer);
+        when(repository.hentBetalinger(personnummer)).thenReturn(transaksjon1);
 
+        // act
         List <Transaksjon> resultat2 = bankController.hentBetalinger();
 
+        // assert
         assertEquals(transaksjon1, resultat2);
 
     }
 
     @Test
     public void hentbetalingerFEIL() {
-
+        // arrange
         when(sjekk.loggetInn()).thenReturn(null);
 
+        // act
         List <Transaksjon> resultat2 = bankController.hentBetalinger();
 
+        // assert
         assertNull(resultat2);
 
     }
 
     @Test
     public void utforbetalingOK(){
-
+        // arrange
         List<Transaksjon> transaksjoner = new ArrayList<>();
+        String personnummer = "100299 89333"; // random laget personnummer
 
-        when(sjekk.loggetInn()).thenReturn("11111111111");
+        when(sjekk.loggetInn()).thenReturn(personnummer);
         when(repository.utforBetaling(1)).thenReturn("OK");
-        when(repository.hentBetalinger("11111111111")).thenReturn(transaksjoner);
+        when(repository.hentBetalinger(personnummer)).thenReturn(transaksjoner);
 
+        // act
         List <Transaksjon> resultat3 = bankController.utforBetaling(1);
 
+        // assert
         assertEquals(transaksjoner, resultat3);
     }
 
     @Test
     public void utforbetalingIKKELoggetInn(){
-
-
+        // arrange
         when(sjekk.loggetInn()).thenReturn(null);
 
+        // act
         List<Transaksjon> resultat4 = bankController.utforBetaling(0);
+
+        // assert
         assertNull(resultat4);
 
     }
 
     @Test
     public void hentKundeInfo_loggetInn() {
-
         // arrange
         Kunde enKunde = new Kunde("01010110523",
                 "Lene", "Jensen", "Askerveien 22", "3270",
@@ -192,7 +210,6 @@ public class EnhetstestBankController {
 
     @Test
     public void hentKundeInfo_IkkeloggetInn() {
-
         // arrange
         when(sjekk.loggetInn()).thenReturn(null);
 
@@ -240,6 +257,7 @@ public class EnhetstestBankController {
 
     @Test
     public void endreKunde_OK() {
+        // arrange
         Kunde kunde1 = new Kunde("12345678910", "Per", "Hansen", "Osloveien 2",
                 "0123", "Oslo", "10203040", "Hei123");
 
