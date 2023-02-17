@@ -11,6 +11,7 @@ import oslomet.testing.Models.Kunde;
 import oslomet.testing.Models.Transaksjon;
 import oslomet.testing.Sikkerhet.Sikkerhet;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 @RestController
@@ -21,6 +22,9 @@ public class BankController {
 
     @Autowired
     Sikkerhet sjekk;
+
+    @Autowired
+    private DataSource dataSource;
 
     @GetMapping("/hentTransaksjoner")
     public Konto hentTransaksjoner(String kontoNr, String fraDato, String tilDato) {
@@ -96,5 +100,10 @@ public class BankController {
                 return repository.endreKundeInfo(innKunde);
             }
         return null;
+    }
+
+    @GetMapping("/initDB")
+    public String initDB(){
+        return repository.initDB(dataSource);
     }
 }

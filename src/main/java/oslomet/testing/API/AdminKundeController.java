@@ -6,6 +6,7 @@ import oslomet.testing.DAL.AdminRepository;
 import oslomet.testing.Models.Kunde;
 import oslomet.testing.Sikkerhet.Sikkerhet;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 @RestController
@@ -16,6 +17,9 @@ public class AdminKundeController {
 
     @Autowired
     private Sikkerhet sjekk;
+
+    @Autowired
+    private DataSource dataSource;
 
     @GetMapping("/hentAlle")
     public List<Kunde> hentAlle() {
@@ -51,6 +55,11 @@ public class AdminKundeController {
             return repository.slettKunde(personnummer);
         }
         return "Ikke logget inn";
+    }
+
+    @GetMapping("/initDB")
+    public String initDB(){
+        return repository.initDB(dataSource);
     }
 }
 
