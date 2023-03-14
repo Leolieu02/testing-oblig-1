@@ -59,6 +59,6 @@ public class Sikkerhet {
         if (session.getAttribute("Innlogget") != null){
             return (String) session.getAttribute("Innlogget");
         }
-        return "Hallo";
+        return null;
     }
 }

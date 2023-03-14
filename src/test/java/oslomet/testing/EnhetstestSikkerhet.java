@@ -50,6 +50,24 @@ public class EnhetstestSikkerhet {
     }
 
     @Test
+    public void loggInnFeilPerson() {
+        // act
+        String resultat = sjekk.sjekkLoggInn("273", "HeiHei");
+
+        // assert
+        assertEquals("Feil i personnummer", resultat);
+    }
+
+    @Test
+    public void loggInnFeilPassord() {
+        // act
+        String resultat = sjekk.sjekkLoggInn("12345678901", "Hei");
+
+        // assert
+        assertEquals("Feil i passord", resultat);
+    }
+
+    @Test
     public void loggInnFeil() {
         // arrange
         when(repository.sjekkLoggInn("12345678901", "HeiHei")).thenReturn("Feil");
@@ -98,9 +116,7 @@ public class EnhetstestSikkerhet {
     @Test
     public void loggetInn() {
         // arrange
-        //when(sjekk.sjekkLoggInn("12345678901", "HeiHei")).thenReturn("OK");
-        session.setAttribute("Innlogget", "12345678901");
-        //when(sjekk.loggetInn()).thenReturn("12345678901");
+        when(session.getAttribute("Innlogget")).thenReturn("12345678901");
 
         // act
         String resultat = sjekk.loggetInn();
